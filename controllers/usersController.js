@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt';
 import { v4 as uuid } from "uuid";
 
 export async function signUpUser(req, res) {
-    const { firstName, lastName, email, password } = req.body
+    const { firstName, lastName, email, password } = res.locals.user;
     const SALT = 10;
     try {
         await db.collection("users").insertOne({ firstName, lastName, email, password: bcrypt.hashSync(password, SALT) });
