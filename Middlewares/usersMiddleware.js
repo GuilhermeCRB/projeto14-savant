@@ -1,7 +1,10 @@
-import joi from "joi";
 import { stripHtml } from "string-strip-html";
+import joi from "joi";
+import chalk from "chalk";
 
-export async function validateSignUp(req, res, next){
+import db from "../db.js";
+
+export async function validateSignUp(req, res, next) {
     const user = req.body;
 
     const userSchema = joi.object({
@@ -22,7 +25,15 @@ export async function validateSignUp(req, res, next){
         password: stripHtml(user.password).result
     }
 
-    res.locals.user = sanitizedUser;
+    try {
+        const thereIsUser = await db.collection("users").findOne({ email: sanitizedUser.email });
+        if (thereIsUser) return res.status(409).send("E-mail is already in use, please try a different one!");
 
-    next();
+        res.locals.user = sanitizedUser;
+
+        next();
+    } catch (e) {
+        console.log(chalk.red.bold(`\nWARNING: search for email in database failed! \nError: \n`), e);
+        res.status(500).send(e);
+    }
 }
