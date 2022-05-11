@@ -13,5 +13,5 @@ app.use(cors());
 
 app.use(usersRouter);
 
-const { PORT } = process.env;
-app.listen(PORT, () => console.log(chalk.white.bold.bgGreenBright(`\n Application is running on port ${PORT}... \n`)));
+const port = process.env.PORT || 5000;
+app.listen(port, () => console.log(chalk.white.bold.bgGreenBright(`\n Application is running on port ${port}... \n`)));
