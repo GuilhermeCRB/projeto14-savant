@@ -1,6 +1,7 @@
 import { stripHtml } from "string-strip-html";
 import joi from "joi";
 import chalk from "chalk";
+import bcrypt from 'bcrypt';
 
 import db from "../db.js";
 
@@ -54,24 +55,20 @@ export async function signInValidation(req, res, next){
         email: stripHtml(user.email).result,
         password: stripHtml(user.password).result
     }
-    res.locals.user = sanitizedUser;
-    console.log(sanitizedUser)
+    const { email, password } = sanitizedUser;
 
-    next();
+    try{
+        const isThereUser = await db.collection("users").findOne({ email });
+        if (!isThereUser) return res.status(404).send("User was not found!");
+        
+        const isPasswordValid = bcrypt.compareSync(password, isThereUser.password);
+        if (!isPasswordValid) return res.sendStatus(401);
+        
+        res.locals.user = isThereUser;
+        
+        next();
+    }catch(e){
+        console.log(chalk.red.bold(`\nWARNING: search for user in database failed! \nError: \n`), e);
+        res.status(500).send(e);
+    }
 }
-// const { email, password } = sanitizedUser;
-
-// try{
-//     const isThereUser = await db.collection("users").findOne({ email });
-//     if (!isThereUser) return res.status(404).send("User was not found!");
-    
-//     const isPasswordValid = bcrypt.compareSync(password, isThereUser.password);
-//     if (!isPasswordValid) return res.sendStatus(401);
-    
-//     res.locals.user = isThereUser;
-    
-//     next();
-// }catch(e){
-//     console.log(chalk.red.bold(`\nWARNING: search for user in database failed! \nError: \n`), e);
-//     res.status(500).send(e);
-// }
