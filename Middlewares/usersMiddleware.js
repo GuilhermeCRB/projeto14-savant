@@ -49,5 +49,29 @@ export async function signInValidation(req, res, next){
     const validation = userSchema.validate(user);
     if (validation.error) return res.status(422).send(validation.error.details);
 
+    const sanitizedUser = {
+        ...user,
+        email: stripHtml(user.email).result,
+        password: stripHtml(user.password).result
+    }
+    res.locals.user = sanitizedUser;
+    console.log(sanitizedUser)
+
     next();
 }
+// const { email, password } = sanitizedUser;
+
+// try{
+//     const isThereUser = await db.collection("users").findOne({ email });
+//     if (!isThereUser) return res.status(404).send("User was not found!");
+    
+//     const isPasswordValid = bcrypt.compareSync(password, isThereUser.password);
+//     if (!isPasswordValid) return res.sendStatus(401);
+    
+//     res.locals.user = isThereUser;
+    
+//     next();
+// }catch(e){
+//     console.log(chalk.red.bold(`\nWARNING: search for user in database failed! \nError: \n`), e);
+//     res.status(500).send(e);
+// }
