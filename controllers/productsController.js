@@ -1,9 +1,10 @@
 import db from "../db.js";
 
 export async function getProducts(req, res){
+    const title = req.query.title;
+    const gener = req.query.gener;
+    
     try{
-        const title = req.query.title;
-        const gener = req.query.gener;
         
         if(!title && !gener){
             const products = await db.collection('products').find();

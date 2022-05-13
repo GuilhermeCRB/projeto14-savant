@@ -6,4 +6,4 @@ const productsRouter = Router();
 
 productsRouter.get("/products", getProducts)
 
-export default usersRouter;
+export default productsRouter;
