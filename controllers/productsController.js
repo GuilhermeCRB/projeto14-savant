@@ -23,7 +23,7 @@ export async function getProducts(req, res){
         }
     }
     catch(err){
-        console.log(chalk.red.bold(`\nWARNING: sign up failed! \nError: \n`), e);
+        console.log(chalk.red.bold(`\nWARNING: getting products failed! \nError: \n`), e);
         res.status(500).send(e);
     }
 }
