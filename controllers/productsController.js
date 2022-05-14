@@ -2,11 +2,11 @@ import db from "../db.js";
 
 export async function getProducts(req, res){
     const title = req.query.title;
-    const gener = req.query.gener;
+    const genre = req.query.genre;
 
     try{
         
-        if(!title && !gener){
+        if(!title && !genre){
             const products = await db.collection('products').find().toArray();
 
             res.status(200).send(products);
@@ -16,8 +16,8 @@ export async function getProducts(req, res){
             const product = await db.collection('products').find({ title: title.replaceAll("-", " ")}).toArray();
             res.status(200).send(product);
         }
-        if(gener){
-            const products = await db.collection('products').findAll({gener}).toArray();
+        if(genre){
+            const products = await db.collection('products').findAll({genre}).toArray();
 
             res.status(200).send(products);
         }
