@@ -1,25 +1,28 @@
 import db from "../db.js";
 
+import { ObjectId } from "mongodb";
 import chalk from "chalk";
 
 export async function getProducts(req, res){
-    const title = req.query.title;
+    const productId = req.query.productId;
     const genre = req.query.genre;
 
     try{
         
-        if(!title && !genre){
+        if(!productId && !genre){
             const products = await db.collection('products').find().toArray();
 
             res.status(200).send(products);
         }
-
-        if(title){
-            const product = await db.collection('products').find({ title: title.replaceAll("-", " ")}).toArray();
+        
+        if(productId){
+            const product = await db.collection('products').findOne({ _id: ObjectId(productId) });
+            
             res.status(200).send(product);
         }
         if(genre){
-            const products = await db.collection('products').find({genre}).toArray();
+            console.log(genre)
+            const products = await db.collection(`${genre}`).find().toArray();
 
             res.status(200).send(products);
         }
