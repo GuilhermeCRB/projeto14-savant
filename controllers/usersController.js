@@ -18,7 +18,8 @@ export async function signUpUser(req, res) {
 
 export async function signInUser(req, res) {
     const { user } = res.locals;
-    const { _id, name } = res.locals.user;
+    const { _id, firstName, lastName } = res.locals.user;
+    const name = `${firstName} ${lastName}`;
 
     const key = process.env.JWT_KEY
     const config = { expiresIn: 600 };
