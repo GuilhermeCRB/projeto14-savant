@@ -17,9 +17,10 @@ export async function getProducts(req, res){
         
         if(productId){
             const product = await db.collection('products').findOne({ _id: ObjectId(productId) });
-            
+
             res.status(200).send(product);
         }
+        
         if(genre){
             console.log(genre)
             const products = await db.collection(`${genre}`).find().toArray();

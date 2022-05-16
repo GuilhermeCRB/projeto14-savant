@@ -4,7 +4,8 @@ import chalk from "chalk";
 import dotenv from "dotenv";
 
 import usersRouter from "./routes/usersRouter.js";
-import productsRouter from "./routes/productsRouter.js"
+import productsRouter from "./routes/productsRouter.js";
+
 
 const app = express();
 dotenv.config();
