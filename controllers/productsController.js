@@ -6,10 +6,11 @@ import chalk from "chalk";
 export async function getProducts(req, res){
     const productId = req.query.productId;
     const genre = req.query.genre;
+    const title = req.query.title;
 
     try{
         
-        if(!productId && !genre){
+        if(!productId && !genre && !title){
             const products = await db.collection('products').find().toArray();
 
             res.status(200).send(products);
@@ -26,6 +27,11 @@ export async function getProducts(req, res){
             const products = await db.collection(`${genre}`).find().toArray();
 
             res.status(200).send(products);
+        }
+        if(title){
+            const product = await db.collection('products').find({title: title}).toArray();
+
+            res.status(200).send(product);
         }
     }
     catch(e){
