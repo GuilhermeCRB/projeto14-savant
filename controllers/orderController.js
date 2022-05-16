@@ -8,7 +8,7 @@ export async function postOrder(){
     try{
         await db.collection("orders").insertOne(order);
 
-        res.status(200).send(ObjectId);
+        res.sendStatus(201);
     }
     catch(e){
         console.log(chalk.red.bold(`\nWARNING: post order failed! \nError: \n`), e);
