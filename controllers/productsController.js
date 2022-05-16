@@ -42,7 +42,7 @@ export async function getProducts(req, res) {
     }
 }
 
-export async function calcFreight(req, res) {
+export async function calcShipping(req, res) {
     const URL = "http://ws.correios.com.br/calculador/CalcPrecoPrazo.asmx?wsdl";
     const { CEP } = req.body;
 
