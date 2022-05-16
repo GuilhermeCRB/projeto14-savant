@@ -1,5 +1,6 @@
 import db from "../db.js";
 
+import { ObjectId } from "mongodb";
 import bcrypt from 'bcrypt';
 import jwt from "jsonwebtoken";
 
@@ -34,7 +35,7 @@ export async function signInUser(req, res) {
 
 export async function updateStatus(req, res) {
     const { token } = res.locals;
-    
+
     const now = Date.now();
 
     try {
@@ -46,9 +47,35 @@ export async function updateStatus(req, res) {
                 }
             }
         );
-        console.log("Atualizei status")
+
         res.status(200).send("Atualização de status concluída");
     } catch (e) {
         res.status(500).send(e);
     }
+}
+
+setInterval(checkUserStatus, 15000);
+
+async function checkUserStatus() {
+    const now = Date.now();
+
+    try {
+        const removedUsers = await db.collection("sessions").find({ lastStatus: { $lt: now - 10000 } }).toArray();
+        removedUsers.forEach((removedParticipant) => {
+            const id = removedParticipant._id;
+
+            db.collection("sessions").updateOne(
+                { _id: new ObjectId(id) },
+                {
+                    $set: {
+                        token: "", lastStatus: ""
+                    }
+                }
+            );
+        });
+
+        console.log("\nRemoved paticipants: ", removedUsers, "\n")
+    } catch (error) {
+        res.status(500).send(error);
+    };
 }
