@@ -1,4 +1,5 @@
 import joi from "joi";
+import { stripHtml } from "string-strip-html";
 
 export async function validadeOrder(req, res, next){
     const order = req.body;
