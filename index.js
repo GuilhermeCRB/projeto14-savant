@@ -4,7 +4,8 @@ import chalk from "chalk";
 import dotenv from "dotenv";
 
 import usersRouter from "./routes/usersRouter.js";
-import productsRouter from "./routes/productsRouter.js";
+import productsRouter from "./routes/productsRouter.js"
+import orderRouter from "./routes/orderRouter.js";
 
 const app = express();
 dotenv.config();
@@ -14,6 +15,7 @@ app.use(cors());
 
 app.use(usersRouter);
 app.use(productsRouter);
+app.use(orderRouter);
 
 
 const port = process.env.PORT || 5000;
