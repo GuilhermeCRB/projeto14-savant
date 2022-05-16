@@ -4,6 +4,7 @@ import chalk from "chalk";
 import bcrypt from 'bcrypt';
 
 import db from "../db.js";
+import { ObjectId } from "mongodb";
 
 export async function validateSignUp(req, res, next) {
     const user = req.body;
@@ -39,7 +40,7 @@ export async function validateSignUp(req, res, next) {
     }
 }
 
-export async function signInValidation(req, res, next){
+export async function signInValidation(req, res, next) {
     const user = req.body;
 
     const userSchema = joi.object({
@@ -57,18 +58,41 @@ export async function signInValidation(req, res, next){
     }
     const { email, password } = sanitizedUser;
 
-    try{
+    try {
         const isThereUser = await db.collection("users").findOne({ email });
         if (!isThereUser) return res.status(404).send("User was not found!");
-        
+
         const isPasswordValid = bcrypt.compareSync(password, isThereUser.password);
         if (!isPasswordValid) return res.sendStatus(401);
-        
+
         res.locals.user = isThereUser;
-        
+
         next();
-    }catch(e){
+    } catch (e) {
         console.log(chalk.red.bold(`\nWARNING: search for user in database failed! \nError: \n`), e);
         res.status(500).send(e);
+    }
+}
+
+export async function validateToken(req, res, next) {
+    const { authorization } = req.headers;
+    const { userId } = req.body;
+
+    const token = authorization?.replace("Bearer", "").trim();
+    if (!token) return res.status(401).send("Must send a token.");
+
+    try {
+        const isThereSession = await db.collection("sessions").findOne({ token });
+        if (!isThereSession) return res.status(401).send("Token is invalid.");
+
+        const user = await db.collection("users").findOne({ _id: ObjectId(userId) });
+        if (!user) return res.status(404).send("User not found");
+
+        res.locals.token = token;
+
+        next();
+    } catch (error) {
+        console.log(chalk.red.bold("Error when checking token or user: \n"), error);
+        return res.status(500).send("Error when checking token or user.");
     }
 }
